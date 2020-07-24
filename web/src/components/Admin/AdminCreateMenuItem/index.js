@@ -47,6 +47,7 @@ export default function AdminCreateMenuItem(){
         <form onSubmit={handleMenuItemCreation}>
           <strong>Name:</strong>
           <input 
+            required
             type="text"
             placeholder="Menu Item Name"
             value={name}
@@ -54,6 +55,7 @@ export default function AdminCreateMenuItem(){
           />
           <strong>Price:</strong>
           <input 
+            required
             type="number"
             placeholder="Item Price"
             value={price}
@@ -61,6 +63,7 @@ export default function AdminCreateMenuItem(){
           />
           <strong>Description:</strong>
           <input 
+            required
             type="text" 
             placeholder="Item Description"
             value={description}
@@ -68,6 +71,7 @@ export default function AdminCreateMenuItem(){
           />
           <strong>Stock:</strong>
           <input 
+            required
             type="number"
             placeholder="Item Stock Level"
             value={stock}

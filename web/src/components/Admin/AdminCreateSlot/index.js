@@ -6,7 +6,7 @@ import './styles.css';
 
 import api from '../../../services/api';
 
-function AdminCreateSlots(){
+export default function AdminCreateSlots(){
   const [startTime, setStartTime] = useState('');
   const [duration, setDuration] = useState(0);
   const [maxCapacity, setMaxCapacity] = useState(0);
@@ -62,6 +62,7 @@ function AdminCreateSlots(){
 
           <p>Start Time:</p>
           <input 
+            required
             type="time"
             placeholder="Start Time e.g. 18:00"
             value={startTime}
@@ -69,6 +70,7 @@ function AdminCreateSlots(){
           />
           <p>Duration (in minutes):</p>
           <input 
+            required
             type="number"
             placeholder="Duration in minutes"
             value={duration}
@@ -76,6 +78,7 @@ function AdminCreateSlots(){
           />
           <p>Maximum capacity:</p>
           <input 
+            required
             type="number" 
             placeholder="Maximum people capacity"
             value={maxCapacity}
@@ -163,5 +166,3 @@ function AdminCreateSlots(){
     </div>
   )
 }
-
-export default AdminCreateSlots;

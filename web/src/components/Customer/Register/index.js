@@ -32,7 +32,6 @@ export default function Register(){
   async function handleRegister(event){
     event.preventDefault();
 
-    if(!firstName || !lastName || !email || !password) return alert("Missing Information. Please make sure all fields are filled.");
     if(password !== passwordConfirmation) return alert("Passwords don't match. Please try again.");
 
     const data = {
@@ -63,14 +62,16 @@ export default function Register(){
 
           <form onSubmit={handleRegister}>
             <p>First Name:</p>
-            <input 
+            <input
+              required 
               placeholder="First Name"
               value={firstName}
               onChange={event => setFirstName(event.target.value)}
             />
 
             <p>Last Name:</p>
-            <input 
+            <input
+              required 
               placeholder="Last Name"
               value={lastName}
               onChange={event => setLastName(event.target.value)}
@@ -78,6 +79,7 @@ export default function Register(){
 
             <p>Email:</p>
             <input 
+              required
               type="email" 
               placeholder="you@email.com"
               value={email}
@@ -86,6 +88,7 @@ export default function Register(){
 
             <p>Password:</p>
             <input 
+              required
               type="password" 
               placeholder="password"
               value={password}
@@ -94,13 +97,15 @@ export default function Register(){
 
             <p>Confirm Password:</p>
             <input 
+              required
               type="password" 
               placeholder="confirm password"
               value={passwordConfirmation}
               onChange={event => setPasswordConfirmation(event.target.value)}
             />
 
-            <button type="submit" 
+            <button 
+              type="submit" 
               disabled={!firstName || !lastName || !email || !password || !passwordConfirmation }>
               Register
             </button>

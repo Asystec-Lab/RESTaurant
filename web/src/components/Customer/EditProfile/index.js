@@ -48,7 +48,7 @@ export default function EditProfile(){
       
       const response = await api.put(`users`, data);
 
-      alert('User Profile Updated Succesfully');
+      alert('User Profile Updated Successfully');
 
       history.push('/profile');
 
@@ -64,18 +64,21 @@ export default function EditProfile(){
         <form onSubmit={handleUpdateProfile}>
           <p>First Name:</p>
           <input 
+            required
             placeholder="First Name"
             value={firstName}
             onChange={event => setFirstName(event.target.value)}
           />
           <p>Last Name:</p>
           <input 
+            required
             placeholder="Last Name"
             value={lastName}
             onChange={event => setLastName(event.target.value)}
           />
           <p>Email:</p>
           <input 
+            required
             type="email" 
             placeholder="you@email.com"
             value={email}
@@ -83,7 +86,7 @@ export default function EditProfile(){
             onChange={event => setEmail(event.target.value)}
           />
 
-          <Link  to="/profile">
+          <Link to="/profile">
             <FiArrowLeft size={16} color="#e02041"/>
             Back to Profile
           </Link>

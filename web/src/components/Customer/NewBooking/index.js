@@ -96,19 +96,27 @@ export default function NewBooking() {
         <form action="submit">
           <p>Date:</p>  
           <input 
+            required
             type="date" 
             value={date}
             onChange={event => setDate(event.target.value)}
           />
           <p>Number of People:</p>
           <input 
+            required
             type="number" 
             placeholder="Number of people"
             value={numberOfPeople}
             onChange={event => setNumberOfPeople(event.target.value)}
           />
 
-          <button className="secondary-button" onClick={handleCheckAvailability}>Check Availability</button>
+          <button 
+            className="secondary-button" 
+            onClick={handleCheckAvailability}
+            disabled={!date || numberOfPeople === 0}
+          >
+          Check Availability
+          </button>
 
           {availableSlots.length > 0 ? (
             <p className="available-slots">Available Slots:</p>
@@ -132,6 +140,7 @@ export default function NewBooking() {
           
           <p className="available-slots">Confirmation Email:</p>
           <input 
+            required
             type="email" 
             placeholder="Your email you@email.com"
             value={email}

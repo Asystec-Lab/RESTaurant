@@ -104,6 +104,13 @@
   filter: brightness(90%);
 }
 
+.new-booking-container .secondary-button:disabled {
+  background: rgb(190, 190, 190);
+  color: #f0f0f5;
+  cursor: not-allowed;
+  border-color: #000;
+}
+
 .new-booking-content .slot-button {
   padding: 3px;
   width: 18%;
