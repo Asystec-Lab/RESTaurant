@@ -53,6 +53,7 @@ export default function AdminCreateUser(){
         <form onSubmit={handleRegister}>
           <p>First Name:</p>
           <input 
+            required
             placeholder="First Name"
             value={firstName}
             onChange={event => setFirstName(event.target.value)}
@@ -60,6 +61,7 @@ export default function AdminCreateUser(){
 
           <p>Last Name:</p>
           <input 
+            required
             placeholder="Last Name"
             value={lastName}
             onChange={event => setLastName(event.target.value)}
@@ -67,6 +69,7 @@ export default function AdminCreateUser(){
 
           <p>Email:</p>
           <input 
+            required
             type="email" 
             placeholder="you@email.com"
             value={email}
@@ -75,6 +78,7 @@ export default function AdminCreateUser(){
 
           <p>Password:</p>
           <input 
+            required
             type="password" 
             placeholder="password"
             value={password}
@@ -83,6 +87,7 @@ export default function AdminCreateUser(){
 
           <p>Confirm Password:</p>
           <input 
+            required
             type="password" 
             placeholder="confirm password"
             value={passwordConfirmation}
@@ -92,7 +97,7 @@ export default function AdminCreateUser(){
           <p>Is Admin?</p>
           <label className="custom-checkbox-container">
             <input
-            checked
+              checked
               className="is-admin" 
               type="checkbox" 
               value={isAdmin}

@@ -62,6 +62,7 @@ export default function Login(){
         <form onSubmit={handleLogin}>
           <p>Email: </p>
           <input 
+            required
             type="email" 
             placeholder="you@email.com"
             value={email}
@@ -70,6 +71,7 @@ export default function Login(){
 
           <p>Password: </p>
           <input 
+            required
             type="password" 
             placeholder="password"
             value={password}
