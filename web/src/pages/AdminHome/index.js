@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory, Redirect } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import './styles.css';
 
@@ -53,7 +53,7 @@ export default function AdminHome(props){
       setLastName(response.data.user.last_name);
       setIsAdmin(response.data.user.is_admin);
 
-      if(response.data.user.is_admin === 0 ) return Redirect('/admin/login');
+      if(response.data.user.is_admin === 0 ) return history.push('/admin/login');
       
     } catch (error) {
       alert(`Couldn't Load User Profile. Please try again. Error: ${error}.`);
