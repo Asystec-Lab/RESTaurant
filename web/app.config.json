@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "restaurant-web",
+      "script": "npx",
+      "interpreter": "none",
+      "args": "serve -s build"
+    }
+  ]
+}
