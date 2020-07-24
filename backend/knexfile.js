@@ -17,6 +17,10 @@ module.exports = {
           timezone: 'UTC',
           dateStrings: true
         },
+        pool: { 
+          min: 0, 
+          max: 10 
+        },
         migrations: {
           tableName: 'knex_migrations',
           directory: `${__dirname}/src/database/migrations`

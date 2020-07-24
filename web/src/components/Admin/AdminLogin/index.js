@@ -18,7 +18,7 @@ export default function AdminLogin(){
   useEffect(() => {
     async function loadProfile(){
       try {
-        if(id && accessToken && isAdmin === 1) return history.push('/admin');
+        if(id && accessToken && isAdmin) return history.push('/admin');
 
       } catch (error) {
         alert(`Couldn't Load User Profile. Please try again. Error: ${error}.`);
@@ -37,6 +37,7 @@ export default function AdminLogin(){
 
     try {
       const response = await api.post('sessions', data);
+      console.log(response)
       if(!response.data.isAdmin) return alert('User is not an admin. Cannot access Admin Panel');
 
       localStorage.setItem('id', response.data.id);

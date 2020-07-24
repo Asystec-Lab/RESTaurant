@@ -53,7 +53,9 @@ export default function AdminHome(props){
       setLastName(response.data.user.last_name);
       setIsAdmin(response.data.user.is_admin);
 
-      if(response.data.user.is_admin === 0 ) return history.push('/admin/login');
+      console.log(response.data.user.is_admin)
+
+      if(!response.data.user.is_admin) return history.push('/admin/login');
       
     } catch (error) {
       alert(`Couldn't Load User Profile. Please try again. Error: ${error}.`);
