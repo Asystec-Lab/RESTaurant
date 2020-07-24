@@ -1,19 +1,27 @@
 const knex = require("../database/knex");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const awsParamStore = require( 'aws-param-store' );
+const AWSSecretsManager = require("../../AWSSecretsManager");
 
-//Fetching JSON Web Token Secret from AWS SSM Parameter Store
+/*
+const awsParamStore = require( 'aws-param-store' );
 const jwtSecret = awsParamStore.getParameterSync('restaurant-jwt-token-secret', { region: 'eu-west-1' } );
+*/
 
 module.exports = {
   async create(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
+      const jwtSecret = await AWSSecretsManager.getCredentials('restaurant-jwt-token-secret');
+
+      console.log(jwtSecret.secret)
+
       const { email, password } = req.body;
 
       if (!email || !password) return res.status(400).json({message: "Missing Required Information from Request" });
 
-      const userFromDB = await knex("users").where({ email: email.toLowerCase() }).first();
+      const userFromDB = await connectDB("users").where({ email: email.toLowerCase() }).first();
 
       if (!userFromDB) return res.status(400).json({ message: "User Not Found" });
 
@@ -22,10 +30,10 @@ module.exports = {
       //JWT Auth is built here - After checking the user credentials (authentication)
       if (!await bcrypt.compare(password, userFromDB.password)) return res.status(400).json({ message: "Password is incorrect" });
         
-      const accessToken = jwt.sign(userFromDB.id, jwtSecret.Value);
+      const accessToken = jwt.sign(userFromDB.id, jwtSecret.secret);
 
       return res.status(200).json({
-        message: "User Logged in succesfully",
+        message: "User Logged in successfully",
         id: userFromDB.id,
         accessToken: accessToken,
         isAdmin: userFromDB.is_admin

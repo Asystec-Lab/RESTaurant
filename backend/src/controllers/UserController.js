@@ -9,7 +9,9 @@ const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 module.exports = {
   async index(req, res, next) {
     try {
-      const allUsersFromDB = await knex("users");
+      const connectDB = await knex.connect();
+      const allUsersFromDB = await connectDB("users");
+
       return res.status(200).json(allUsersFromDB);
     } catch (error) {
         next(error);
@@ -24,7 +26,8 @@ module.exports = {
         return res.status(400).json({ message: "Missing User ID" });
       }
 
-      const userFromDB = await knex("users").where({ id: id }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ id: id }).first();
 
       console.log(userFromDB);
 
@@ -45,7 +48,8 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const userFromDB = await knex("users").where({ email: email }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ email: email }).first();
 
       if(userFromDB) return res.status(400).json({ message: "Email address already registered" });
 
@@ -54,7 +58,7 @@ module.exports = {
 
       const verificationToken = crypto.randomBytes(20).toString("hex");
 
-      const newUser = await knex('users').insert({
+      const newUser = await connectDB('users').insert({
         first_name: firstName,
         last_name: lastName,
         email: email.toLowerCase(),
@@ -108,18 +112,19 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const userFromDB = await knex("users").where({ id: id }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ id: id }).first();
 
       if(!userFromDB) return res.status(400).json({ message: "No User Found" });
 
-      const updatedUser = await knex('users').where({ id: id }).update({
+      const updatedUser = await connectDB('users').where({ id: id }).update({
         first_name: firstName,
         last_name: lastName,
         email: email.toLowerCase(),
         is_admin: isAdmin
       });
 
-      return res.status(200).json({ message: 'User updated succesfully'});
+      return res.status(200).json({ message: 'User updated successfully'});
 
     } catch (error) {
         next(error);
@@ -135,13 +140,14 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const userFromDB = await knex("users").where({ id: id }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ id: id }).first();
 
       if(!userFromDB) return res.status(400).json({ message: "No User Found" });
 
-      const deletedUser = await knex('users').where({ id: id}).del();
+      const deletedUser = await connectDB('users').where({ id: id}).del();
 
-      return res.status(200).json({ message: 'User deleted succesfully' });
+      return res.status(200).json({ message: 'User deleted successfully' });
 
     } catch (error) {
         next(error);
@@ -157,11 +163,12 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const userFromDB = await knex("users").where({ verification_token: verificationToken }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ verification_token: verificationToken }).first();
 
       if(!userFromDB) return res.status(400).json({ message: "No User Found with this verification token" });
 
-      const verifiedUser = await knex('users').where({ verification_token: verificationToken }).update({
+      const verifiedUser = await connectDB('users').where({ verification_token: verificationToken }).update({
         verified: 1
       });
 
@@ -181,7 +188,8 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const userFromDB = await knex("users").where({ email: email }).first();
+      const connectDB = await knex.connect();
+      const userFromDB = await connectDB("users").where({ email: email }).first();
 
       console.log(userFromDB);
 

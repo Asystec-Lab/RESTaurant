@@ -3,7 +3,9 @@ const knex = require("../database/knex");
 module.exports = {
   async index(req, res, next) {
     try {
-      const allTables = await knex("tables");
+      const connectDB = await knex.connect();
+
+      const allTables = await connectDB("tables");
       return res.json(allTables);
     } catch (error) {
         next(error);
@@ -12,13 +14,15 @@ module.exports = {
 
   async view(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id } = req.params;
 
       if (!id) {
         return res.status(400).json({ message: "Missing Table ID" });
       }
 
-      const tableFromDB = await knex("tables").where({ id: id }).first();
+      const tableFromDB = await connectDB("tables").where({ id: id }).first();
 
       if (!tableFromDB) return res.status(400).json({ message: "No Table Found" });
 
@@ -31,22 +35,24 @@ module.exports = {
 
   async create(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { name, maxCapacity } = req.body;
 
       if (!name || !maxCapacity) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const tableFromDB = await knex("tables").where({ name: name }).first();
+      const tableFromDB = await connectDB("tables").where({ name: name }).first();
 
       if(tableFromDB) return res.status(400).json({ message: "Table is already registered" });
 
-      const newTable = await knex('tables').insert({
+      const newTable = await connectDB('tables').insert({
         name: name,
         max_capacity: maxCapacity
       });
 
-      return res.status(201).json({ message: "Table Registered Succesfully" });
+      return res.status(201).json({ message: "Table Registered Successfully" });
 
     } catch (error) {
         next(error);
@@ -55,22 +61,24 @@ module.exports = {
 
   async update(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id, name, maxCapacity } = req.body;
 
       if (!id || !name || !maxCapacity) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const tableFromDB = await knex("tables").where({ id: id }).first();
+      const tableFromDB = await connectDB("tables").where({ id: id }).first();
 
       if(!tableFromDB) return res.status(400).json({ message: "No Table Found" });
 
-      const updatedTable = await knex('tables').where({ id: id }).update({
+      const updatedTable = await connectDB('tables').where({ id: id }).update({
         name: name,
         max_capacity: maxCapacity
       });
 
-      return res.status(200).json({ message: 'Table updated succesfully'});
+      return res.status(200).json({ message: 'Table updated successfully'});
 
     } catch (error) {
         next(error);
@@ -79,6 +87,7 @@ module.exports = {
 
   async delete(req, res, next) {
     try {
+      const connectDB = await knex.connect();
 
       const { id } = req.body;
 
@@ -86,13 +95,13 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const tableFromDB = await knex("tables").where({ id: id }).first();
+      const tableFromDB = await connectDB("tables").where({ id: id }).first();
 
       if(!tableFromDB) return res.status(400).json({ message: "No Table Found" });
 
-      const deletedTable = await knex('tables').where({ id: id}).del();
+      const deletedTable = await connectDB('tables').where({ id: id}).del();
 
-      return res.status(200).json({ message: 'Table deleted succesfully' });
+      return res.status(200).json({ message: 'Table deleted successfully' });
 
     } catch (error) {
         next(error);
