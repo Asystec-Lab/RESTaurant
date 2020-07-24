@@ -1,13 +1,3 @@
-//const awsParamStore = require( 'aws-param-store' );
-
-/*
-//Fetching credentials from AWS SSM
-const dbHost = awsParamStore.getParameterSync('restaurant-db-host', { region: 'eu-west-1' } );
-const user = awsParamStore.getParameterSync('restaurant-db-username', { region: 'eu-west-1' } );
-const password = awsParamStore.getParameterSync('restaurant-db-password', { region: 'eu-west-1' } );
-const database = awsParamStore.getParameterSync('restaurant-db-database', { region: 'eu-west-1' } );
-*/
-
 const AWSSecretsManager = require("./AWSSecretsManager");
 
 module.exports = {

@@ -3,19 +3,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const AWSSecretsManager = require("../../AWSSecretsManager");
 
-/*
-const awsParamStore = require( 'aws-param-store' );
-const jwtSecret = awsParamStore.getParameterSync('restaurant-jwt-token-secret', { region: 'eu-west-1' } );
-*/
-
 module.exports = {
   async create(req, res, next) {
     try {
       const connectDB = await knex.connect();
 
       const jwtSecret = await AWSSecretsManager.getCredentials('restaurant-jwt-token-secret');
-
-      console.log(jwtSecret.secret)
 
       const { email, password } = req.body;
 
