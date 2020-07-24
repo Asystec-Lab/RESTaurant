@@ -3,7 +3,9 @@ const knex = require("../database/knex");
 module.exports = {
   async index(req, res, next) {
     try {
-      const allMenuItems = await knex("menu_items");
+      const connectDB = await knex.connect();
+
+      const allMenuItems = await connectDB("menu_items");
       return res.json(allMenuItems);
     } catch (error) {
         next(error);
@@ -12,13 +14,15 @@ module.exports = {
 
   async view(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id } = req.params;
 
       if (!id) {
         return res.status(400).json({ message: "Missing Menu Item ID" });
       }
 
-      const menuItemFromDB = await knex("menu_items").where({ id: id }).first();
+      const menuItemFromDB = await connectDB("menu_items").where({ id: id }).first();
 
       if (!menuItemFromDB) return res.status(400).json({ message: "No Menu Item Found" });
 
@@ -31,24 +35,26 @@ module.exports = {
 
   async create(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { name, price, description, stock } = req.body;
 
       if (!name) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const menuItemFromDB = await knex("menu_items").where({ name: name }).first();
+      const menuItemFromDB = await connectDB("menu_items").where({ name: name }).first();
 
       if(menuItemFromDB) return res.status(400).json({ message: "Menu Item already exists" });
 
-      const newMenuItem = await knex('menu_items').insert({
+      const newMenuItem = await connectDB('menu_items').insert({
         name: name,
         price: price,
         description: description,
         stock: stock
       });
 
-      return res.status(201).json({ message: "Menu Item Created Succesfully" });
+      return res.status(201).json({ message: "Menu Item Created Successfully" });
 
     } catch (error) {
         next(error);
@@ -57,24 +63,26 @@ module.exports = {
 
   async update(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id, name, price, description, stock } = req.body;
 
       if (!id || !name) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const menuItemFromDB = await knex("menu_items").where({ id: id }).first();
+      const menuItemFromDB = await connectDB("menu_items").where({ id: id }).first();
 
       if(!menuItemFromDB) return res.status(400).json({ message: "No Menu Item Found" });
 
-      const updatedMenuItem = await knex('menu_items').where({ id: id }).update({
+      const updatedMenuItem = await connectDB('menu_items').where({ id: id }).update({
         name: name,
         price: price,
         description: description,
         stock: stock
       });
 
-      return res.status(200).json({ message: 'Menu Item updated succesfully'});
+      return res.status(200).json({ message: 'Menu Item updated successfully'});
 
     } catch (error) {
         next(error);
@@ -83,6 +91,7 @@ module.exports = {
 
   async delete(req, res, next) {
     try {
+      const connectDB = await knex.connect();
 
       const { id } = req.body;
 
@@ -90,13 +99,13 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const menuItemFromDB = await knex("menu_items").where({ id: id }).first();
+      const menuItemFromDB = await connectDB("menu_items").where({ id: id }).first();
 
       if(!menuItemFromDB) return res.status(400).json({ message: "No Menu Item Found" });
 
-      const deletedMenuItem = await knex('menu_items').where({ id: id}).del();
+      const deletedMenuItem = await connectDB('menu_items').where({ id: id}).del();
 
-      return res.status(200).json({ message: 'Menu Item deleted succesfully' });
+      return res.status(200).json({ message: 'Menu Item deleted successfully' });
 
     } catch (error) {
         next(error);

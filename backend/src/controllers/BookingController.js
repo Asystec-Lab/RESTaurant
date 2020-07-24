@@ -7,16 +7,18 @@ const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 module.exports = {
   async index(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { userID } = req.query;
 
       let allBookings = [];
 
       if(!userID){
-        allBookings = await knex("bookings");
+        allBookings = await connectDB("bookings");
         return res.status(200).json(allBookings);
       }
 
-      allBookings = await knex("bookings").where({ user_id: userID });
+      allBookings = await connectDB("bookings").where({ user_id: userID });
       return res.status(200).json(allBookings);
       
     } catch (error) {
@@ -26,13 +28,15 @@ module.exports = {
 
   async view(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id } = req.params;
 
       if (!id) {
         return res.status(400).json({ message: "Missing Booking ID" });
       }
 
-      const bookingFromDB = await knex("bookings").where({ id: id }).first();
+      const bookingFromDB = await connectDB("bookings").where({ id: id }).first();
 
       if (!bookingFromDB) return res.status(400).json({ message: "No Booking Found" });
 
@@ -45,13 +49,15 @@ module.exports = {
 
   async create(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { userID, userEmail, slotID, date, numberOfPeople, startTime, duration } = req.body;
 
       if (!userID || !userEmail || !slotID || !date || !numberOfPeople || !startTime || !duration) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const newBooking = await knex('bookings').insert({
+      const newBooking = await connectDB('bookings').insert({
         user_id: userID,
         slot_id: slotID,
         date: date,
@@ -115,24 +121,26 @@ module.exports = {
 
   async update(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id, userID, tableID, slotID, date } = req.body;
 
       if (!id || !userID || !tableID || !slotID || !date) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const bookingFromDB = await knex("bookings").where({ id: id }).first();
+      const bookingFromDB = await connectDB("bookings").where({ id: id }).first();
 
       if(!bookingFromDB) return res.status(400).json({ message: "No Booking Found" });
 
-      const updatedBooking = await knex('bookings').where({ id: id }).update({
+      const updatedBooking = await connectDB('bookings').where({ id: id }).update({
         user_id: userID,
         table_id: tableID,
         slot_id: slotID,
         date: date
       });
 
-      return res.status(200).json({ message: 'Booking updated succesfully' });
+      return res.status(200).json({ message: 'Booking updated successfully' });
 
     } catch (error) {
         next(error);
@@ -141,20 +149,21 @@ module.exports = {
 
   async delete(req, res, next) {
     try {
-
+      const connectDB = await knex.connect();
+      
       const { id } = req.body;
 
       if (!id) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const bookingFromDB = await knex("bookings").where({ id: id }).first();
+      const bookingFromDB = await connectDB("bookings").where({ id: id }).first();
 
       if(!bookingFromDB) return res.status(400).json({ message: "No Booking Found" });
 
-      const deletedBooking = await knex('bookings').where({ id: id}).del();
+      const deletedBooking = await connectDB('bookings').where({ id: id}).del();
 
-      return res.status(200).json({ message: 'Booking deleted succesfully' });
+      return res.status(200).json({ message: 'Booking deleted successfully' });
 
     } catch (error) {
         next(error);
@@ -163,6 +172,8 @@ module.exports = {
 
   async checkSlotsAvailability(req, res, next){
     try {
+      const connectDB = await knex.connect();
+
       const { date, numberOfPeople } = req.query;
       var availableSlots = [];
 
@@ -181,8 +192,8 @@ module.exports = {
       weekday[6] = "Saturday";
       var dateWeekDay = weekday[convertedDate.getDay()];
       
-      const allRegisteredSlotsWeekDayTrueRaw = await knex.schema.raw(`SELECT id, start_time, duration, max_capacity from slots WHERE ${dateWeekDay} = true`);
-      const existingBookingsOnDate = await knex("bookings").where({ date: date });
+      const allRegisteredSlotsWeekDayTrueRaw = await connectDB.schema.raw(`SELECT id, start_time, duration, max_capacity from slots WHERE ${dateWeekDay} = true`);
+      const existingBookingsOnDate = await connectDB("bookings").where({ date: date });
 
       //Get all slots that are registered for that week day
       var allRegisteredSlotsWeekDayTrueClean = [];

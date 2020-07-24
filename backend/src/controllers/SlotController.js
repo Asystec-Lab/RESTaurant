@@ -3,7 +3,9 @@ const knex = require("../database/knex");
 module.exports = {
   async index(req, res, next) {
     try {
-      const allSlots = await knex("slots");
+      const connectDB = await knex.connect();
+
+      const allSlots = await connectDB("slots");
       return res.json(allSlots);
     } catch (error) {
         next(error);
@@ -12,13 +14,15 @@ module.exports = {
 
   async view(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id } = req.params;
 
       if (!id) {
         return res.status(400).json({ message: "Missing Slot ID" });
       }
 
-      const slotFromDB = await knex("slots").where({ id: id }).first();
+      const slotFromDB = await connectDB("slots").where({ id: id }).first();
 
       if (!slotFromDB) return res.status(400).json({ message: "No Slot Found" });
 
@@ -31,17 +35,19 @@ module.exports = {
 
   async create(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { startTime, duration, maxCapacity, monday, tuesday, wednesday, thursday, friday, saturday, sunday } = req.body;
 
       if (!startTime || !duration || !maxCapacity) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const slotFromDB = await knex("slots").where({ start_time: startTime }).first();
+      const slotFromDB = await connectDB("slots").where({ start_time: startTime }).first();
 
       if(slotFromDB) return res.status(400).json({ message: "Slot already exists" });
 
-      const newSlot = await knex('slots').insert({
+      const newSlot = await connectDB('slots').insert({
         start_time: startTime,
         duration: duration,
         max_capacity: maxCapacity,
@@ -54,7 +60,7 @@ module.exports = {
         sunday: sunday
       });
 
-      return res.status(201).json({ message: "Slot Created Succesfully" });
+      return res.status(201).json({ message: "Slot Created Successfully" });
 
     } catch (error) {
         next(error);
@@ -63,17 +69,19 @@ module.exports = {
 
   async update(req, res, next) {
     try {
+      const connectDB = await knex.connect();
+
       const { id, startTime, duration, maxCapacity, monday, tuesday, wednesday, thursday, friday, saturday, sunday } = req.body;
 
       if (!id || !startTime || !duration || !maxCapacity) {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const slotFromDB = await knex("slots").where({ id: id }).first();
+      const slotFromDB = await connectDB("slots").where({ id: id }).first();
 
       if(!slotFromDB) return res.status(400).json({ message: "No Slot Found" });
 
-      const updatedSlot = await knex('slots').where({ id: id }).update({
+      const updatedSlot = await connectDB('slots').where({ id: id }).update({
         start_time: startTime,
         duration: duration,
         max_capacity: maxCapacity,
@@ -86,7 +94,7 @@ module.exports = {
         sunday: sunday
       });
 
-      return res.status(200).json({ message: 'Slot updated succesfully'});
+      return res.status(200).json({ message: 'Slot updated successfully'});
 
     } catch (error) {
         next(error);
@@ -95,6 +103,7 @@ module.exports = {
 
   async delete(req, res, next) {
     try {
+      const connectDB = await knex.connect();
 
       const { id } = req.body;
 
@@ -102,13 +111,13 @@ module.exports = {
         return res.status(400).json({ message: "Missing Required Information from Request" });
       }
 
-      const slotFromDB = await knex("slots").where({ id: id }).first();
+      const slotFromDB = await connectDB("slots").where({ id: id }).first();
 
       if(!slotFromDB) return res.status(400).json({ message: "No Slot Found" });
 
-      const deletedSlot = await knex('slots').where({ id: id}).del();
+      const deletedSlot = await connectDB('slots').where({ id: id}).del();
 
-      return res.status(200).json({ message: 'Slot deleted succesfully' });
+      return res.status(200).json({ message: 'Slot deleted successfully' });
 
     } catch (error) {
         next(error);
