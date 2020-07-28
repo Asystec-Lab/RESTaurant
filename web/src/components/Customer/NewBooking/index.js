@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import AWS from 'aws-sdk';
+import bcrypt from 'bcryptjs';
+
 import './styles.css';
 
 import api from '../../../services/api';
@@ -29,7 +31,14 @@ export default function NewBooking() {
       try{
         const response = await api.get('/authenticate');
 
-        AWS.config.update({region: 'eu-west-1',accessKeyId: response.data.accessKeyId,secretAccessKey: response.data.secretAccessKey});
+        const AKI = atob(response.data.AKI);
+        const SAK = atob(response.data.SAK);
+
+        console.log(AKI, SAK)
+
+        AWS.config.update({region: 'eu-west-1',
+                          accessKeyId: AKI,
+                          secretAccessKey: SAK});
       }catch (error) {
         alert(`Couldn't Authenticate with Backend. Please try again. Error: ${error}.`);
       }
