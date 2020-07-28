@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
+import AWS from 'aws-sdk';
+import bcrypt from 'bcryptjs';
 
 import './styles.css';
 
@@ -20,9 +22,28 @@ export default function NewBooking() {
   const [startTime, setStartTime] = useState('');
   const [duration, setDuration] = useState(0);
 
+  const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+
   const history = useHistory();
 
   useEffect(() => {
+    async function getCredentials(){
+      try{
+        const response = await api.get('/authenticate');
+
+        const AKI = atob(response.data.AKI);
+        const SAK = atob(response.data.SAK);
+
+        console.log(AKI, SAK)
+
+        AWS.config.update({region: 'eu-west-1',
+                          accessKeyId: AKI,
+                          secretAccessKey: SAK});
+      }catch (error) {
+        alert(`Couldn't Authenticate with Backend. Please try again. Error: ${error}.`);
+      }
+    }
+
     async function loadProfile(){
     try {
       
@@ -38,6 +59,7 @@ export default function NewBooking() {
       alert(`Couldn't Load User Profile. Please try again. Error: ${error}.`);
     }
   }
+  getCredentials();
   loadProfile();
   }, [])
 
@@ -71,11 +93,57 @@ export default function NewBooking() {
         duration
       }
 
-      const response = await api.post('bookings', data);
+      const SQSParams = {
+        MessageAttributes: {
+          userID: {
+            DataType: "String",
+            StringValue: String(data.userID),
+          },
+          userEmail: {
+            DataType: "String",
+            StringValue: String(data.userEmail),
+          },
+          date: {
+            DataType: "String",
+            StringValue: String(data.date),
+          },
+          slotID: {
+            DataType: "String",
+            StringValue: String(data.slotID),
+          },
+          numberOfPeople: {
+            DataType: "String",
+            StringValue: String(data.numberOfPeople),
+          },
+          startTime: {
+            DataType: "String",
+            StringValue: String(data.startTime),
+          },
+          duration: {
+            DataType: "String",
+            StringValue: String(data.duration),
+          },
+        },
+        MessageBody: `{"userID":${data.userID},"userEmail":"${data.userEmail}","date":"${data.date}","slotID":${data.slotID},"numberOfPeople":${data.numberOfPeople},"startTime":"${data.startTime}","duration":${data.duration}}`,
+        MessageDeduplicationId:
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15),
+        MessageGroupId: "Group1", // Required for FIFO queues
+        QueueUrl:
+          "https://sqs.eu-west-1.amazonaws.com/128363080680/RESTaurant-NewBooking.fifo",
+      };
 
-      alert('Booking Registered Successfully');
+      sqs.sendMessage(SQSParams, function(err, data){
+        if (err) {
+          console.log("Error", err);
+          return alert("Error Creating Booking", err);
+        } else {
+          console.log("Success", data.MessageId);
 
-      history.push('/bookings');
+          alert("Booking Registered Successfully. Confirmation Email will arrive shortly.");
+          history.push('/bookings');
+        }
+      })
 
     } catch (error) {
       alert(`Couldn't Create Booking.`);

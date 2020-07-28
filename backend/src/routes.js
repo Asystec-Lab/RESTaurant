@@ -7,6 +7,8 @@ const SlotController = require('./controllers/SlotController.js');
 const TableController = require('./controllers/TableController.js');
 const BookingController = require('./controllers/BookingController.js');
 
+const AuthenticateFrontEnd = require('./services/AuthenticateFrontEnd.js');
+
 const openRoutes = express.Router();
 
 //Session Controller Routes
@@ -49,6 +51,9 @@ openRoutes.post('/bookings', BookingController.create);
 openRoutes.put('/bookings', BookingController.update);
 openRoutes.delete('/bookings', BookingController.delete);
 openRoutes.get('/availability', BookingController.checkSlotsAvailability);
+
+//Bookings Controller Routes
+openRoutes.get('/authenticate', AuthenticateFrontEnd.getCredentials);
 
 module.exports = {
     openRoutes: openRoutes
