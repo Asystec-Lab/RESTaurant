@@ -9,6 +9,7 @@ import api from '../../../services/api';
 export default function Login(){
   const [id, setID] = useState(localStorage.getItem("id"));
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,12 +38,11 @@ export default function Login(){
     try {
       const response = await api.post('/sessions', data);
 
-      console.log(response)
-
       localStorage.setItem('id', response.data.id);
       localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('isAdmin', response.data.isAdmin);
 
-      alert(`User Logged In Successfully. JWT Token: ${localStorage.getItem('accessToken')}`);
+      alert(`User Logged In Successfully.`);
       
       window.location.reload();
 

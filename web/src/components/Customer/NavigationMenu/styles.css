@@ -41,10 +41,18 @@
   opacity: 0.5;
 }
 
+.navigation-menu .admin-panel {
+  border-radius: 5px;
+  padding: 5px;
+  background: #0c71c3;
+  color: #FFF;
+}
+
 .navigation-menu .book-online {
   border-radius: 5px;
   padding: 5px;
   background: #ff6257;
+  color: #FFF;
 }
 
 .navigation-menu svg {

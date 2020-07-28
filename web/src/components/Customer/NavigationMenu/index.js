@@ -9,6 +9,7 @@ import asystecLogo from '../../../assets/asystec-logo.png';
 export default function NavigationMenu(){
   const [id, setID] = useState(localStorage.getItem("id"));
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
 
   const history = useHistory();
 
@@ -24,21 +25,27 @@ export default function NavigationMenu(){
             <FiMenu size={16} color="#e02041"/>
             Menu
           </Link>
+          {isAdmin == 1 && 
+            <Link className="admin-panel" to="/admin">
+              <FiBook size={16} color="#FFF"/>
+              Admin Panel
+          </Link>
+          }
         </div>
           
         <img src={asystecLogo} alt=""/>
   
         <div className="logged-right-links">
           <Link to="/profile">
-          <FiUser size={16} color="#e02041"/>
+            <FiUser size={16} color="#e02041"/>
             Profile
           </Link>
           <Link to="/bookings">
-          <FiBookOpen size={16} color="#e02041"/>
+            <FiBookOpen size={16} color="#e02041"/>
             Bookings
           </Link>
           <Link className="book-online" to="/bookings/new">
-          <FiBook size={16} color="#FFF"/>
+            <FiBook size={16} color="#FFF"/>
             Book Online
           </Link>
           <Link onClick={() => {

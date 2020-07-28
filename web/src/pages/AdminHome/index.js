@@ -22,7 +22,7 @@ import AdminCreateBooking from '../../components/Admin/AdminCreateBooking';
 export default function AdminHome(props){
   const [id, setID] = useState(localStorage.getItem("id"));
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
-  const [isAdmin, setIsAdmin] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
@@ -45,13 +45,12 @@ export default function AdminHome(props){
   useEffect(() => {
     async function loadProfile(){
     try {
-      if(!id || !accessToken) return history.push('/admin/login');
+      if(!id || !accessToken || isAdmin == 0) return history.push('/admin/login');
 
       const response = await api.get(`/users/${id}`);
 
       setFirstName(response.data.user.first_name);
       setLastName(response.data.user.last_name);
-      setIsAdmin(response.data.user.is_admin);
 
       console.log(response.data.user.is_admin)
 
