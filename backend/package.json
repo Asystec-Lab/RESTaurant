@@ -19,7 +19,8 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "sqs-consumer": "^5.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.4"

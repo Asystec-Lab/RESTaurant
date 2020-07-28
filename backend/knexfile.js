@@ -4,8 +4,6 @@ module.exports = {
   async getConfiguration() {
     const credentials = await AWSSecretsManager.getCredentials('restaurant-db'); 
 
-    console.log(credentials)
-
     return {
       development: {
         client: "mysql",

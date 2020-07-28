@@ -29,8 +29,6 @@ module.exports = {
       const connectDB = await knex.connect();
       const userFromDB = await connectDB("users").where({ id: id }).first();
 
-      console.log(userFromDB);
-
       if (!userFromDB) return res.status(400).json({ message: "No User Found" });
 
       return res.status(200).json({ user: userFromDB });

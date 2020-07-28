@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const { Consumer } = require('sqs-consumer');
 
 const AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-west-1'});
@@ -239,5 +240,79 @@ module.exports = {
     } catch (error) {
         next(error);
     }
-  }
+  },
+
+  async createFromQueue(message) {
+    try {
+      const sqsMessage = JSON.parse(message.Body);
+      
+      const { userID, userEmail, slotID, date, numberOfPeople, startTime, duration } = sqsMessage;
+
+      if (!userID || !userEmail || !slotID || !date || !numberOfPeople || !startTime || !duration) {
+        return console.log("Missing Required Information from Request");
+      }
+
+      const connectDB = await knex.connect();
+
+      const newBooking = await connectDB('bookings').insert({
+        user_id: userID,
+        slot_id: slotID,
+        date: date,
+        number_of_people: numberOfPeople,
+        start_time: startTime,
+        duration: duration 
+      });
+
+      const SQSParams = {
+        MessageAttributes: {
+          "bookingID": {
+            DataType: "String",
+            StringValue: String(newBooking[0])
+          },
+          "userID": {
+            DataType: "String",
+            StringValue: String(userID)
+          },
+          "userEmail": {
+            DataType: "String",
+            StringValue: userEmail
+          },
+          "date": {
+            DataType: "String",
+            StringValue: date
+          },
+          "startTime": {
+            DataType: "String",
+            StringValue: startTime
+          },
+          "duration": {
+            DataType: "String",
+            StringValue: String(duration)
+          },
+          "numberOfPeople": {
+            DataType: "String",
+            StringValue: String(numberOfPeople)
+          },
+        },
+        MessageBody: "New Booking Confirmation Email",
+        MessageDeduplicationId: String(newBooking[0]),  // Required for FIFO queues
+        MessageGroupId: "Group1",  // Required for FIFO queues
+        QueueUrl: "https://sqs.eu-west-1.amazonaws.com/128363080680/RESTaurant-BookingConfirmationEmail.fifo"
+      }
+
+      sqs.sendMessage(SQSParams, function(err, data){
+        if (err) {
+          console.log("Error", err);
+          return res.status(500).json({ err });
+        } else {
+          console.log("Success", data.MessageId);
+        }
+      })
+
+      return console.log("Booking Fully Processed Successfully");
+
+    } catch (error) {
+        console.log(error);
+    }
+  },
 };
